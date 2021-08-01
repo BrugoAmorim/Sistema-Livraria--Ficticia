@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         Models.livrariaContext db = new Models.livrariaContext();
 
-        [HttpPost]
+        [HttpPost("cadastrar")]
         public Models.Respnse.LivroResponse inserirlivro(Models.Request.LivroRequest req){
 
             Utils.TbLivroPLivroResponseUtils conversor = new Utils.TbLivroPLivroResponseUtils();

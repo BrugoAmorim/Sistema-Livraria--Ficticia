@@ -11,10 +11,10 @@ namespace API.Models
     {
         public int IdFuncionario { get; set; }
         public string Nome { get; set; }
-        public DateTime? Nascimento { get; set; }
+        public DateTime Nascimento { get; set; }
         public string Telefone { get; set; }
         public string Endereco { get; set; }
         public string Email { get; set; }
-        public decimal? Salario { get; set; }
+        public decimal Salario { get; set; }
     }
 }
