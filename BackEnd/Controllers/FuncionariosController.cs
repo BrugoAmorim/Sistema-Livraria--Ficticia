@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using API.Models;
+using BackEnd.Models;
 
 namespace BackEnd.Controllers
 {
@@ -11,51 +11,73 @@ namespace BackEnd.Controllers
     [Route("[Controller]")]
     public class FuncionariosController : ControllerBase
     {
-        livrariaContext db = new livrariaContext();
         Utils.TbFuncionarioConversor converter = new Utils.TbFuncionarioConversor();
+        Business.FuncionarioBusiness validacoes = new Business.FuncionarioBusiness();
+
         [HttpGet("listarfuncionarios")]
-        public List<Models.Respnse.FuncionarioResponse> consultarfuncionarios(){
+        public ActionResult<List<Models.Respnse.FuncionarioResponse>> consultarfuncionarios(){
 
-            List<TbFuncionario> func = db.TbFuncionario.ToList();
-            List<Models.Respnse.FuncionarioResponse> listfuncionarios = new List<Models.Respnse.FuncionarioResponse>();
+            try{
+                List<Models.TbFuncionario> func = validacoes.listarfuncionarios();
+                List<Models.Respnse.FuncionarioResponse> listfuncionarios = new List<Models.Respnse.FuncionarioResponse>();
 
-            foreach(TbFuncionario i in func)
-            {
-                listfuncionarios.Add((converter.TabelaparaRes(i)));
+                foreach(TbFuncionario i in func)
+                {
+                    listfuncionarios.Add((converter.TabelaparaRes(i)));
+                }
+                return listfuncionarios;
             }
-            return listfuncionarios;
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
 
         [HttpPost("cadastrarfunc")]
-        public Models.Respnse.FuncionarioResponse inserirfuncionario(Models.Request.FuncionarioRequest req)
+        public ActionResult<Models.Respnse.FuncionarioResponse> inserirfuncionario(Models.Request.FuncionarioRequest req)
         {
-            TbFuncionario nvfunc = converter.ReqparaTabela(req);
-            
-            db.TbFuncionario.Add(nvfunc);
-            db.SaveChanges();
-
-            Models.Respnse.FuncionarioResponse res = converter.TabelaparaRes(nvfunc);
-            return res;
+            try{
+                Models.TbFuncionario ctx = validacoes.validarcampos(req);
+                Models.Respnse.FuncionarioResponse res = converter.TabelaparaRes(ctx);
+                return res;
+            }
+            catch(System.Exception ex){
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
         
         [HttpPut("alteraregistro/{idfuncionario}")]
-        public Models.Respnse.FuncionarioResponse alteraregistrofunc(Models.Request.FuncionarioRequest request,int idfuncionario)
+        public ActionResult<Models.Respnse.FuncionarioResponse> alteraregistrofunc(Models.Request.FuncionarioRequest req,int idfuncionario)
         {
-            TbFuncionario altfunc = converter.RequestparaTabela(request,db.TbFuncionario.First(x => x.IdFuncionario == idfuncionario));
-
-            db.SaveChanges();
-
-            Models.Respnse.FuncionarioResponse func = converter.TabelaparaRes(altfunc);
-            return func;
+            try{
+                Models.TbFuncionario altfunc = validacoes.alterarcamposfuncionario(req,idfuncionario);
+                Models.Respnse.FuncionarioResponse func = converter.TabelaparaRes(altfunc);
+                return func;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
 
         [HttpDelete("apagaregistro/{idfuncionario}")]
-        public void deletarfuncionario(int idfuncionario)
+        public ActionResult<string> deletarfuncionario(int idfuncionario)
         {
-            TbFuncionario func = db.TbFuncionario.First(x => x.IdFuncionario == idfuncionario);
-
-            db.TbFuncionario.Remove(func);
-            db.SaveChanges();
+            try{
+                validacoes.confirmardelete(idfuncionario);
+                return "deletado com sucesso";
+            }
+            catch(System.Exception ex){
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
     }
 }

@@ -2,67 +2,89 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using BackEnd.Models;
+using BackEnd.Models.Request;
+using BackEnd.Models.Respnse;
+using BackEnd.Utils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace BackEnd.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
     public class LivrosController
     {
-        Models.livrariaContext db = new Models.livrariaContext();
+        livrariaContext db = new livrariaContext();
+        Business.LivroBusiness validacoes = new Business.LivroBusiness();   
+        Utils.TbLivroPLivroResponseUtils conversor = new TbLivroPLivroResponseUtils(); 
 
         [HttpPost("cadastrar")]
-        public Models.Respnse.LivroResponse inserirlivro(Models.Request.LivroRequest req){
-
-            Utils.TbLivroPLivroResponseUtils conversor = new Utils.TbLivroPLivroResponseUtils();
-            
-            Models.TbLivro nvlivro = conversor.ReqParaTabela(req);
-            db.TbLivro.Add(nvlivro);
-            db.SaveChanges();
-
-            Models.Respnse.LivroResponse retorno = conversor.TabelaParaRes(nvlivro);
-            return retorno;   
+        public ActionResult<LivroResponse> inserirlivro(LivroRequest req){
+               
+            try{
+            Models.TbLivro livro = validacoes.validacoescadastro(req);
+            LivroResponse res = conversor.TabelaParaRes(livro);
+            return res;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
     
         [HttpGet("consultarlivros")]
-        public List<Models.Respnse.LivroResponse> verlivros(){
+        public ActionResult<List<LivroResponse>> verlivros(){
 
-            List<Models.TbLivro> livros = db.TbLivro.ToList();
-            Models.Respnse.LivroResponse res = new Models.Respnse.LivroResponse();
-            Utils.TbLivroPLivroResponseUtils conversor = new Utils.TbLivroPLivroResponseUtils();
+            try{
+            List<Models.TbLivro> livros = validacoes.consultarlivros();
 
-            List<Models.Respnse.LivroResponse> listalivros = new List<Models.Respnse.LivroResponse>();
+            List<LivroResponse> listalivros = new List<LivroResponse>();
 
-            foreach(Models.TbLivro i in livros)
+            foreach(TbLivro i in livros)
             {
                 listalivros.Add(conversor.TabelaParaRes(i));
             }
             return listalivros;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
 
         [HttpPut("alterarlivro/{idlivro}")]
-        public Models.Respnse.LivroResponse alterarlivro (Models.Request.LivroRequest req, int idlivro)
+        public ActionResult<LivroResponse> alterarlivro (LivroRequest req, int idlivro)
         {
-            Utils.TbLivroPLivroResponseUtils conversor = new Utils.TbLivroPLivroResponseUtils();
-            
-            Models.TbLivro livro = conversor.ReqParaTabela2
-                    (req,db.TbLivro.First(x => x.IdLivro == idlivro));
-
-            db.SaveChanges();            
-
-            Models.Respnse.LivroResponse resposta = conversor.TabelaParaRes(livro);
+            try{
+            TbLivro livro = validacoes.confirmaralteracao(req,idlivro);
+            LivroResponse resposta = conversor.TabelaParaRes(livro);
             return resposta;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
 
         [HttpDelete("deletarlivro/{idlivro}")]
-        public void apagarlivro (int idlivro){
+        public ActionResult<string> apagarlivro (int idlivro){
 
-            Models.TbLivro modelo = db.TbLivro.First(x => x.IdLivro == idlivro);
-
-            db.TbLivro.Remove(modelo);
-            db.SaveChanges();
+            try{
+                validacoes.confirmardelete(idlivro);
+                return "livro deletador com sucesso";
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message + ", codigo de erro 400"
+                );
+            }
         }
     }
 }

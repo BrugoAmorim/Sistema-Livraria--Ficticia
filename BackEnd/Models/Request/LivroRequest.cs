@@ -1,6 +1,6 @@
 using System;
 
-namespace API.Models.Request
+namespace BackEnd.Models.Request
 {
     public class LivroRequest
     {
