@@ -86,5 +86,21 @@ namespace BackEnd.Controllers
                 );
             }
         }
+    
+        [HttpDelete("deletarlivros")]
+        public ActionResult<string> deletarvarioslivros(Models.Request.DeletearLivrosResquest idslivros)
+        {
+            try
+            {
+                validacoes.deletarlistalivros(idslivros);   
+                return "deletados com sucesso";
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message
+                );
+            }
+        }
     }
 }

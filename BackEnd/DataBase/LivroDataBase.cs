@@ -37,5 +37,21 @@ namespace BackEnd.DataBase
             db.SaveChanges();
             return altlivro;
         }
+    
+        public void deletarlivros(Models.Request.DeletearLivrosResquest idslivros)
+        {
+            List<Models.TbLivro> lista = db.TbLivro.ToList();
+
+            List<Models.TbLivro> listadois = new List<Models.TbLivro>();
+            foreach(int i in idslivros.ids)
+            {
+                listadois = lista.Where(x => x.IdLivro == i).ToList();
+                foreach(Models.TbLivro item in listadois)
+                {
+                    db.TbLivro.Remove(item);
+                    db.SaveChanges();
+                }
+            }
+        }
     }
 }

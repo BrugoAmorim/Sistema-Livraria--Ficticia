@@ -10,9 +10,9 @@ namespace BackEnd.Models
     public partial class TbLivroCliente
     {
         public int IdLivroCliente { get; set; }
-        public int? IdLivro { get; set; }
-        public int? IdCliente { get; set; }
-        public DateTime? DataCompra { get; set; }
+        public int IdLivro { get; set; }
+        public int IdCliente { get; set; }
+        public DateTime DataCompra { get; set; }
 
         public virtual TbCliente IdClienteNavigation { get; set; }
         public virtual TbLivro IdLivroNavigation { get; set; }

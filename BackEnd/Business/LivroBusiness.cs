@@ -106,5 +106,17 @@ namespace BackEnd.Business
             return livroalterado;
         }
 
+        public void deletarlistalivros(Models.Request.DeletearLivrosResquest idslivros)
+        {
+            List<Models.TbLivro> list = databaselivro.buscarlivros();
+
+            foreach(int i in idslivros.ids){
+                Models.TbLivro x = list.FirstOrDefault(x => x.IdLivro == i);
+                if(x == null)
+                    throw new ArgumentException("um ou mais livros não foram encontrados");
+            }
+            
+            databaselivro.deletarlivros(idslivros);
+        }
     }
 }
