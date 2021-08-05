@@ -118,5 +118,31 @@ namespace BackEnd.Business
             
             databaselivro.deletarlivros(idslivros);
         }
+
+        public List<Models.TbLivro> buscarcomfiltro(string letra)
+        {
+            List<Models.TbLivro> livs = databaselivro.buscarlivros();
+            if(letra == "0" || letra == "1" || letra == "2" ||
+               letra == "3" || letra == "4" || letra == "5" ||
+               letra == "6" || letra == "8" || letra == "9" 
+               )
+               throw new ArgumentException("está letra é inválida");
+            
+            if(letra == "!" || letra == "@" || letra == "#" ||
+               letra == "$" || letra == "%" || letra == "&" ||
+               letra == "*"  
+               )
+               throw new ArgumentException("está letra é inválida");
+
+            if(letra.Length > 1)
+                throw new ArgumentException("numero de caracteres inválido");
+        
+            List<Models.TbLivro> livrs = livs.Where(x => x.Nome.Substring(0,1) == letra).ToList(); 
+            List<Models.TbLivro> livrs2 = livs.Where(x => x.Nome.Substring(0,1).ToLower() == letra).ToList(); 
+            if(livrs.Count == 0 && livrs2.Count == 0)
+                throw new ArgumentException("não encontramos nenhum registro");
+
+            return livs;
+        }
     }
 }

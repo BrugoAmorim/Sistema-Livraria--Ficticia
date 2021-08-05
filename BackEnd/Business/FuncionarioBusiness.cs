@@ -108,5 +108,48 @@ namespace BackEnd.Business
 
             return x;
         }
+    
+        public List<Models.TbFuncionario> buscarcomfiltro(string nomepessoa)
+        {
+            List<Models.TbFuncionario> clients = salvar.listarfunc();
+            
+            if(nomepessoa.Contains('0') ||
+               nomepessoa.Contains('1') ||
+               nomepessoa.Contains('2') ||
+               nomepessoa.Contains('3') ||
+               nomepessoa.Contains('4') ||
+               nomepessoa.Contains('5') ||
+               nomepessoa.Contains('6') ||
+               nomepessoa.Contains('7') ||
+               nomepessoa.Contains('8') ||
+               nomepessoa.Contains('9'))
+                throw new ArgumentException("Você colocou um caracter inválido");
+            
+            if(nomepessoa.Contains('!') ||
+               nomepessoa.Contains('@') ||
+               nomepessoa.Contains('#') ||
+               nomepessoa.Contains('$') ||
+               nomepessoa.Contains('%') ||
+               nomepessoa.Contains('&') ||
+               nomepessoa.Contains('*') ||
+               nomepessoa.Contains('(') ||
+               nomepessoa.Contains(')'))
+                throw new ArgumentException("Você colocou um caracter inválido");
+
+            string nm = "";
+            foreach(char caracter in nomepessoa)
+            {
+                if(caracter == ' ')
+                    continue;
+                else
+                    nm += caracter;
+            }
+
+            List<Models.TbFuncionario> lista2 = clients.Where(x => x.Nome.Substring(0,nm.Length).ToLower() == nm.ToLower()).ToList(); 
+            if(lista2.Count == 0)
+                throw new ArgumentException("não encontramos nenhum registro");
+                
+            return lista2;
+        }
     }
 }

@@ -27,6 +27,13 @@ namespace BackEnd.DataBase
         }
         public void confirmardelete(int id){
 
+            List<Models.TbLivroCliente> comprascliente = db.TbLivroCliente.Where(x => x.IdCliente == id).ToList();
+            foreach(Models.TbLivroCliente i in comprascliente)
+            {
+                db.Remove(i);
+                db.SaveChanges();
+            }
+
             Models.TbCliente client = db.TbCliente.First(x => x.IdCliente == id);
             db.TbCliente.Remove(client);
             db.SaveChanges();

@@ -21,6 +21,13 @@ namespace BackEnd.DataBase
         }   
         public void salvardelete(int id){
 
+            List<Models.TbLivroCliente> comprasdolivro = db.TbLivroCliente.Where(x => x.IdLivro == id).ToList();
+            foreach(Models.TbLivroCliente i in comprasdolivro)
+            {
+                db.Remove(i);
+                db.SaveChanges();
+            }
+
             Models.TbLivro livro = db.TbLivro.FirstOrDefault(x => x.IdLivro == id);
             db.TbLivro.Remove(livro);
             db.SaveChanges();
@@ -53,5 +60,6 @@ namespace BackEnd.DataBase
                 }
             }
         }
+
     }
 }

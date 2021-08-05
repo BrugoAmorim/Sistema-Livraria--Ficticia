@@ -79,5 +79,25 @@ namespace BackEnd.Controllers
                 );
             }
         }
+    
+        [HttpGet("filtrarfuncionarios")]
+        public ActionResult<List<Models.Respnse.FuncionarioResponse>> filtrofunc(string nome)
+        {
+            try{
+            List<Models.TbFuncionario> funclist = validacoes.buscarcomfiltro(nome);
+            List<Models.Respnse.FuncionarioResponse> funcres = new List<Models.Respnse.FuncionarioResponse>();
+            foreach(Models.TbFuncionario i in funclist)
+            {
+                funcres.Add(converter.TabelaparaRes(i));
+            }
+            return funcres;
+            }
+            catch(System.Exception ex){
+
+                return new BadRequestObjectResult(
+                    ex.Message
+                );
+            }
+        }
     }
 }

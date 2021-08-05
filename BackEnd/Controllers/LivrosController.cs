@@ -102,5 +102,32 @@ namespace BackEnd.Controllers
                 );
             }
         }
+    
+        [HttpGet("filtrarlivros")]
+        public ActionResult<List<Models.Respnse.LivroResponse>> filtrarlivrospelaletra(string letra){
+
+            try{
+            List<Models.TbLivro> livros = validacoes.buscarcomfiltro(letra);
+            
+            string parametro = "";
+            List<Models.Respnse.LivroResponse> livrofilter = new List<LivroResponse>();
+            foreach(Models.TbLivro i in livros)
+            {
+                parametro = i.Nome.Substring(0,1);
+                
+                if(parametro == letra)
+                    livrofilter.Add(conversor.TabelaParaRes(i));
+                else if(parametro == letra.ToUpper())
+                    livrofilter.Add(conversor.TabelaParaRes(i));
+            }
+            return livrofilter;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message
+                );
+            }
+        }
     }
 }

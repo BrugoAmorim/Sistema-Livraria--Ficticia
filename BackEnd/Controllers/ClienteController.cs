@@ -84,5 +84,25 @@ namespace BackEnd.Controllers
                 );
             }
         }
+
+        [HttpGet("filtrarclientes")]
+        public ActionResult<List<Models.Respnse.ClienteResponse>> buscarclientes(string nome)
+        {
+            try{
+            List<Models.TbCliente> clients = validacoes.buscarcomfiltro(nome);
+            List<Models.Respnse.ClienteResponse> clientres = new List<Models.Respnse.ClienteResponse>();
+            foreach(Models.TbCliente i in clients)
+            {
+                clientres.Add(conversor.TabelaparaRes(i));
+            }
+            return clientres;
+            }
+            catch(System.Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    ex.Message
+                );
+            }
+        }
     }
 }
